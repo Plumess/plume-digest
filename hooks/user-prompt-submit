@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # plume-skills UserPromptSubmit hook
-# Injects PLUME_ROOT into conversation context.
+# Injects DIGEST_ROOT into conversation context.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PLUME_ROOT="$(dirname "$SCRIPT_DIR")"
+DIGEST_ROOT="$(dirname "$SCRIPT_DIR")"
 
-ESCAPED="[PLUME_ROOT: $PLUME_ROOT]"
+ESCAPED="[DIGEST_ROOT: $DIGEST_ROOT]"
 
 cat <<EOF
 {

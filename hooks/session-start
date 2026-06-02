@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 # plume-digest SessionStart hook
-# Injects the PLUME_ROOT signal so the digest skill resolves its output dir
+# Injects the DIGEST_ROOT signal so the digest skill resolves its output dir
 # (config.yml / data/journal / data/reports) from the repo root, not the cwd.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PLUME_ROOT="$(dirname "$SCRIPT_DIR")"
+DIGEST_ROOT="$(dirname "$SCRIPT_DIR")"
 
 cat <<EOF
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "[PLUME_ROOT: $PLUME_ROOT]"
+    "additionalContext": "[DIGEST_ROOT: $DIGEST_ROOT]"
   }
 }
 EOF

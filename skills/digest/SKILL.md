@@ -7,7 +7,7 @@ description: "Use when user requests /digest, a daily summary, or a research rep
 
 Generates daily reports and research reports. Both source directly from jsonl — daily by per-line timestamp slicing, research by topic keyword scanning (main Claude reads jsonl itself, no sub-agent delegation). MEMORY.md provides background context.
 
-Read `$PLUME_ROOT/config.yml` for `locale` (timezone, language), `digest` (default_scope).
+Read `$DIGEST_ROOT/config.yml` for `locale` (timezone, language), `digest` (default_scope).
 
 > A report MUST cover ALL active sessions within scope. Always read source files — never summarize from memory alone.
 
@@ -76,7 +76,7 @@ For each active session:
 2. Summarize from the slice. Focus on user requests, decisions, files modified, outcomes.
 3. **Cross-check files actually modified**: if the slice mentions writing files, verify with `stat` that mtimes fall within the window. Catches anything the slice paraphrasing missed.
 
-Use `python3 -c "..."` for filtering (already whitelisted). Avoid heredoc (`<<'PY'`) and `#` comments inside `-c` — both trigger sandbox patterns. Scratch files, if needed, go under `$PLUME_ROOT/data/.tmp/digest-<YYYYMMDD-HHMMSS>/` (whitelisted for Write / mkdir / rm); clean up at Step 3 end.
+Use `python3 -c "..."` for filtering (already whitelisted). Avoid heredoc (`<<'PY'`) and `#` comments inside `-c` — both trigger sandbox patterns. Scratch files, if needed, go under `$DIGEST_ROOT/data/.tmp/digest-<YYYYMMDD-HHMMSS>/` (whitelisted for Write / mkdir / rm); clean up at Step 3 end.
 
 ```bash
 # Inline filter (one-liner, no comments in the -c string)
@@ -89,12 +89,12 @@ Read MEMORY.md for project context (background only).
 
 > Why jsonl with per-line timestamp filtering: jsonl is the system-written ground truth. Tail is a hack that breaks for long sessions. Per-line timestamp slicing is the only mechanism that correctly handles both short single-day sessions and ultra-long multi-day sessions.
 
-**Step 3** — Generate using `$PLUME_ROOT/templates/daily-report.md`. Write to `$PLUME_ROOT/data/journal/YYYY-MM-DD.md`. If file exists → **Report Update**.
+**Step 3** — Generate using `$DIGEST_ROOT/templates/daily-report.md`. Write to `$DIGEST_ROOT/data/journal/YYYY-MM-DD.md`. If file exists → **Report Update**.
 
-> ⚠️ **Path trap — resolve `$PLUME_ROOT` from config, never from the working directory.** `$PLUME_ROOT` is the `plume_root` value in `config.yml` (e.g. `/root/plume/plume-skills`). It is **NOT** the cwd — cron launches from the parent project dir (e.g. `/root/plume`), which biases toward dropping the install subdir. Write the FULL path *including* that subdir; never collapse to `~/<project>/data/...` or `<cwd>/data/...`.
-> **Self-check before every `data/` write** (journal AND reports): `ls $PLUME_ROOT/data/journal/` — it must already list prior reports. If it's empty or missing (and this is not a brand-new install), you mis-resolved `$PLUME_ROOT` (almost always a dropped path segment) — re-read `config.yml` `plume_root` and correct the path before writing.
+> ⚠️ **Path trap — use the injected `[DIGEST_ROOT: …]` value, never the working directory.** `$DIGEST_ROOT` is injected into context by this tool's SessionStart/UserPromptSubmit hook (it equals `config.yml`'s `digest_root`, e.g. `/root/plume/plume-digest`). It is **NOT** the cwd — cron may launch from a parent dir (e.g. base-level install runs from `/root/plume`), which biases toward dropping the install subdir. Always write the FULL injected path; never collapse to `~/<project>/data/...` or `<cwd>/data/...`. If both `[DIGEST_ROOT: …]` and an unrelated `[PLUME_ROOT: …]` are present (digest co-installed beside other tools), use **DIGEST_ROOT** — that one is yours.
+> **Self-check before every `data/` write** (journal AND reports): `ls $DIGEST_ROOT/data/journal/` — it must already list prior reports. If it's empty or missing (and this is not a brand-new install), you mis-resolved `$DIGEST_ROOT` (almost always a dropped path segment) — re-read `config.yml` `digest_root` and correct the path before writing.
 
-If a scratch directory was created in Step 2, `rm -rf $PLUME_ROOT/data/.tmp/digest-<YYYYMMDD-HHMMSS>/` before exiting.
+If a scratch directory was created in Step 2, `rm -rf $DIGEST_ROOT/data/.tmp/digest-<YYYYMMDD-HHMMSS>/` before exiting.
 
 > **Exclude self-referential digest work**: If a session's slice content is almost entirely a `/digest` command invocation and its execution trace, treat it as noise and omit it from the report — no entry, no count, no mention. The daily report describes user work, not the act of generating itself (e.g. do not emit "自动生成日报" / "Cron 触发 digest" style entries).
 
@@ -114,7 +114,7 @@ Generate a research report on a topic across scoped sessions.
 
 If the user gave no argument, surface a short list of topic clusters derived from recent sessions and let the user pick.
 
-**Step 3** — Generate using `$PLUME_ROOT/templates/research-report.md`. Write to `$PLUME_ROOT/data/reports/<topic-slug>.md`. If file exists → **Report Update**.
+**Step 3** — Generate using `$DIGEST_ROOT/templates/research-report.md`. Write to `$DIGEST_ROOT/data/reports/<topic-slug>.md`. If file exists → **Report Update**.
 
 ---
 

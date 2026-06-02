@@ -1,6 +1,6 @@
 # plume-digest 配置
-# plume_root 由 install.sh 自动写入（指向本仓库根，digest 输出落在此目录的 data/ 下）
-plume_root: ""
+# digest_root 由 install.sh 自动写入（指向本仓库根，digest 输出落在此目录的 data/ 下）
+digest_root: ""
 
 # 本地化设置
 locale:
