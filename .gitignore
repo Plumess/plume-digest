@@ -1,0 +1,10 @@
+# Runtime data (journals, reports, scratch)
+data/
+
+# OS / editor
+.DS_Store
+*.swp
+*~
+
+# install 产物（机器相关，源在 hooks/hooks.json）
+.claude/

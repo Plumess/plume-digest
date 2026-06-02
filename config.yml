@@ -1,0 +1,24 @@
+# plume-digest 配置
+# plume_root 由 install.sh 自动写入（指向本仓库根，digest 输出落在此目录的 data/ 下）
+plume_root: ""
+
+# 本地化设置
+locale:
+  # 时区：影响时间戳、日报日期边界、cron 触发时间计算
+  # cron 命令会自动将此时区的 cron_time 转换为本机时间，无需手动换算
+  # 常用时区：
+  #   Asia/Shanghai (UTC+8)    Asia/Tokyo (UTC+9)      Asia/Singapore (UTC+8)
+  #   America/New_York (UTC-5) America/Los_Angeles (UTC-8) Europe/London (UTC+0)
+  timezone: "Asia/Shanghai"
+  # 生成文档语言：日报、研究报告、设计文档等人类可阅读文档均使用此语言
+  language: "zh-CN"
+
+digest:
+  # 日报默认作用域：只检索 ~/.claude/projects/ 中 slug 包含此关键词的项目
+  # 目的：隔离工作/个人项目——公司项目统一在同一父目录下即可
+  # 留空则每次生成时由用户指定
+  default_scope: "plume"
+
+  # 日报自动生成时间（config 时区）
+  # install.sh cron 会读取此值，自动转换为本机时区写入 crontab
+  cron_time: "06:00"
