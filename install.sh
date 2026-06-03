@@ -83,6 +83,12 @@ write_marker(){
   ok "  marker: $mf"
 }
 
+ensure_config(){
+  [ -f "$CONFIG" ] && return 0
+  if $DRY_RUN; then info "  将从 config.yml.example 生成 config.yml"; return 0; fi
+  cp "${CONFIG}.example" "$CONFIG"; ok "  已从 config.yml.example 生成 config.yml"
+}
+
 write_digest_root(){
   if $DRY_RUN; then info "  将写入 digest_root=$REPO_ROOT 到 config.yml"; return 0; fi
   sed -i "s|^digest_root:.*|digest_root: \"$REPO_ROOT\"|" "$CONFIG"
@@ -143,6 +149,7 @@ cmd_install(){
   local target; target="$(claude_dir)"
   scope_guard
   info "安装 plume-digest → $target"
+  ensure_config
   write_digest_root
   ensure_data_dirs
   install_skill "$target"
@@ -171,6 +178,7 @@ cmd_uninstall(){
 cmd_cron(){
   command -v python3 &>/dev/null || { err "需要 python3 做时区转换"; exit 1; }
   command -v crontab &>/dev/null || { err "未找到 crontab。安装: sudo apt install cron / sudo dnf install cronie"; exit 1; }
+  ensure_config
   local scope; scope="$(grep -oP '^\s*default_scope:\s*"\K[^"]*' "$CONFIG" 2>/dev/null || true)"
   [ -z "$scope" ] && { err "config.yml 中 digest.default_scope 为空。先编辑 config.yml 或运行 ./install.sh"; exit 1; }
 

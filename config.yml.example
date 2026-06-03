@@ -1,0 +1,9 @@
+# plume-digest 配置示例
+# 安装时 install.sh 会从本文件生成 config.yml（config.yml 不入库）；按需修改下面的值。
+digest_root: ""                # install.sh 自动写入本仓库绝对路径，digest 输出落在此目录的 data/ 下
+locale:
+  timezone: "Asia/Shanghai"    # 影响时间戳、日报日期边界、cron 触发时间换算
+  language: "zh-CN"            # 生成文档语言
+digest:
+  default_scope: "plume"       # 日报默认作用域（~/.claude/projects/ 项目目录名子串匹配）
+  cron_time: "06:00"           # 自动生成时间（config 时区）

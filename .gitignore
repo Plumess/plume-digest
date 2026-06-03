@@ -8,3 +8,6 @@ data/
 
 # install 产物（机器相关，源在 hooks/hooks.json）
 .claude/
+
+# 本机配置（从 config.yml.example 生成）
+config.yml
