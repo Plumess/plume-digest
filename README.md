@@ -7,7 +7,7 @@
 
 数据源是 Claude Code 自己写的 jsonl(逐行带时间戳),按每行时间戳精确切片——既能处理短会话,也能正确处理跨天的超长会话。
 
-> 本仓库从 [plume-skills](https://github.com/Plumess/plume-skills) 的 digest 功能提取而来,**完全独立**:自带 skill + hooks + 安装脚本 + 定时配置,与 plume-skills 装在各自的 `.claude/` 下、互不影响、可共存。
+> 本仓库从 [plume-skills](https://github.com/Plumess/plume-skills) 的 digest 功能提取而来,**完全独立**:自带 skill + hooks + 安装脚本 + 定时配置。与 plume-skills 可独立或共存安装——装到不同 `.claude` 天然隔离,装进同一个 `.claude` 也互不影响(独立 marker + hooks 增量合并)。
 
 ## 安装
 
